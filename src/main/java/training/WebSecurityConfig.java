@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 
 @Configuration
@@ -29,7 +30,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .addFilter(siteMinderFilter)
                 .authorizeRequests()
-                    .antMatchers("/", "/offering").permitAll();
+                .anyRequest().authenticated();
+
+                //.authorizeRequests()
+                    //.antMatchers("/", "/offering").permitAll();
                     //.anyRequest().hasAuthority("RoleEmployee");
     }
 
@@ -38,7 +42,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetailsService userDetailsService = new CustomUserDetailsService();
         UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken> wrapper = new UserDetailsByNameServiceWrapper<>(userDetailsService);
 
+
         PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
+        //preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(new PreAuthenticatedGrantedAuthoritiesUserDetailsService());
         preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(wrapper);
 
         authBuilder.authenticationProvider(preAuthenticatedProvider);
